@@ -75,3 +75,55 @@ public:
         return minObs[n-1][m-1];
     }
 };
+
+
+
+//******************************************************************************
+//********************************0-1 BFS with deque****************************
+//******************************************************************************
+class Solution {
+public:
+    int minimumObstacles(vector<vector<int>>& grid) {
+        // this is a graph problem not a dp problem
+
+        // we can use 0-1 BFS using deque
+
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>> dist(n, vector<int>(m, INT_MAX));
+
+        deque<pair<int,int>> dq;
+        dq.push_front({0,0});
+        dist[0][0] = grid[0][0];
+
+        int delRow[] = {0, -1, 0, +1};
+        int delCol[] = {-1, 0, +1, 0};
+
+        while(!dq.empty()) {
+            int row = dq.front().first;
+            int col = dq.front().second;
+
+            dq.pop_front();
+
+            for(int i = 0; i<4; i++) {
+                int newRow = row + delRow[i];
+                int newCol = col + delCol[i];
+
+                if(newRow < 0 || newRow >= n || newCol < 0 || newCol >= m) {
+                    continue;
+                }
+
+                if(dist[newRow][newCol] > dist[row][col] + grid[newRow][newCol]) {
+                    if(grid[newRow][newCol] == 1) {
+                        dq.push_back({newRow, newCol});
+                    }
+                    else {
+                        dq.push_front({newRow, newCol});
+                    }
+                    dist[newRow][newCol] = dist[row][col] + grid[newRow][newCol];
+                }
+            }
+        }
+        return dist[n-1][m-1];
+    }
+};
